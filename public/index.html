@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.9/vue.common.dev.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.0/axios.js"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <div>
+        <input v-model="username" />
+        <input v-model="password" />
+      </div>
+      <div>
+        <button v-on:click="login">Login</button>
+        <button v-on:click="logout">Logout</button>
+        <button v-on:click="getUser">GetUser</button>
+      </div>
+      <div>
+        <button @click="logs=[]">Clear Log</button>
+      </div>
+      <div>{{isLogin}}</div>
+      <!-- 日志 -->
+      <ul>
+        <li v-for="(log,idx) in logs" :key="idx">{{ log }}</li>
+      </ul>
+    </div>
+
+    <script>
+      axios.interceptors.request.use(
+        (config) => {
+          const token = window.localStorage.getItem("token");
+          if (token) {
+            // 判断是否存在token，如果存在的话，则每个http header都加上token
+            // Bearer是JWT的认证头部信息
+            config.headers.common["Authorization"] = "Bearer " + token;
+          }
+          config.headers["wcw-key"] = 123;
+          return config;
+        },
+        (err) => {
+          return Promise.reject(err);
+        }
+      );
+
+      axios.interceptors.response.use(
+        (response) => {
+          app.logs.push(JSON.stringify(response.data));
+          return response;
+        },
+        (err) => {
+          app.logs.push(JSON.stringify(err.data));
+          return Promise.reject(err);
+        }
+      );
+      var app = new Vue({
+        el: "#app",
+        data: {
+          username: "344078971@qq.com",
+          password: "2632",
+          logs: ["123"],
+          isLogin: false,
+        },
+        methods: {
+          async loginOld() {
+            const res = await axios.post("/login-token", {
+              username: this.username,
+              password: this.password,
+            });
+            localStorage.setItem("token", res.data.token);
+          },
+          async logout() {
+            // localStorage.removeItem("token");
+            this.isLogin = false;
+          },
+          async getUser() {
+            await axios.get("/v1/users/5ffab517f41f9036292c849a", {
+              name: "wcw2",
+              key: 3,
+              role: "user",
+              roles: ["user"],
+            });
+          },
+          async email() {
+            await axios.post("/get-login-code", { email: "344078971@qq.com" });
+          },
+          async login() {
+            const res = await axios.post("/login", {
+              email: "344078971@qq.com",
+              code: "868A",
+            });
+            console.log(res);
+            if (res.data.code === 0) this.isLogin = true;
+          },
+        },
+        created() {
+          // this.email();
+          this.login();
+        },
+      });
+    </script>
+  </body>
+</html>
