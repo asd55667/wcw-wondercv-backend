@@ -4,6 +4,9 @@ const idPlugin = require("mongoose-id");
 
 const projectSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String,
+    },
     name: {
       type: String,
     },

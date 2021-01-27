@@ -4,6 +4,9 @@ const idPlugin = require("mongoose-id");
 
 const customSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String,
+    },
     experience: {
       type: String,
     },

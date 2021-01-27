@@ -31,12 +31,14 @@
     <script>
       axios.interceptors.request.use(
         (config) => {
-          const token = window.localStorage.getItem("token");
-          if (token) {
-            // 判断是否存在token，如果存在的话，则每个http header都加上token
-            // Bearer是JWT的认证头部信息
-            config.headers.common["Authorization"] = "Bearer " + token;
-          }
+          // const token = window.localStorage.getItem("token");
+          const token =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IjM0NDA3ODk3MUBxcS5jb20iLCJpZCI6IjIzNCIsInJvbGUiOiJzdXBlcnVzZXIiLCJpYXQiOjE2MTExNDg4NTMsImV4cCI6MTYyNjcwMDg1M30.ohFpm_Kj7E5E3aVTGbxBWsJPCOUN96wcM6NUcuqHE98";
+          // if (token) {
+          // 判断是否存在token，如果存在的话，则每个http header都加上token
+          // Bearer是JWT的认证头部信息
+          config.headers.common["Authorization"] = "Bearer " + token;
+          // }
           config.headers["wcw-key"] = 123;
           return config;
         },
@@ -86,11 +88,46 @@
           async email() {
             await axios.post("/get-login-code", { email: "344078971@qq.com" });
           },
+
+          // // // // // // // // // // // //
           async login() {
-            const res = await axios.post("/login", {
-              email: "344078971@qq.com",
-              code: "868A",
-            });
+            // const _id = "60086aa204fab1026d3c60de";
+            const _id = "234";
+            const basic = {
+              user: {
+                name: { value: "wcw", desc: "213" },
+              },
+            };
+            const skill = [
+              {
+                ref: true,
+                desc: "wcw",
+                update: new Date(),
+              },
+            ];
+            // const skill = {
+            //   _id,
+            //   skill: [
+            //     {
+            //       ref: true,
+            //       desc: "wcwcw",
+            //       update: new Date(),
+            //     },
+            //   ],
+            // };
+
+            const state = "patch";
+            const module = "skill";
+            let res;
+            if (state == "get") {
+              res = await axios.get(`/resume/${module}/${_id}`);
+            } else if (state == "post") {
+              res = await axios.post(`/resume/${module}`, skill);
+            } else if (state == "delete") {
+              res = await axios.delete(`/resume/${module}/${_id}`);
+            } else if (state == "patch") {
+              res = await axios.patch(`/resume/${module}/${_id}`, skill);
+            }
             console.log(res);
             if (res.data.code === 0) this.isLogin = true;
           },

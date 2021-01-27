@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const koaJwt = require("koa-jwt");
 
 // configs
-const { secret, expires } = require("./config");
+const { secret, expires } = require("../app.config");
 const { auth } = require("../../middleware");
 const _axios = require("../axios");
 const router = new Router({ prefix: "/login" });
@@ -31,7 +31,7 @@ router.get("/token/refresh", koaJwt({ secret: secret }), async (ctx) => {
       const access_token = jwt.sign(payload, secret[0], {
         expiresIn: expires.access_token,
       });
-      console.log("refresh", access_token);
+      // console.log("refresh", access_token);
       ctx.body = {
         code: 0,
         access_token,
@@ -63,12 +63,6 @@ router.get("/token", auth, koaJwt({ secret: secret }), async (ctx) => {
       }
     }
   }
-});
-
-// test
-router.get("/auth", koaJwt({ secret: secret }), async (ctx) => {
-  console.log("verify", ctx.state);
-  ctx.body = "verify";
 });
 
 module.exports = router;

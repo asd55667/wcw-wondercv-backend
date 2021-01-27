@@ -43,14 +43,14 @@ module.exports = (ttl) => async (ctx, next) => {
   }
 
   if (!redisAvailable) {
-    ctx.response.set("spacex-api-cache-online", "false");
+    ctx.response.set("wcw-api-cache-online", "false");
     await next();
     return;
   }
-  ctx.response.set("spacex-api-cache-online", "true");
+  ctx.response.set("wcw-api-cache-online", "true");
 
   const { url, method } = ctx.request;
-  const key = `spacex-cache:${hash(
+  const key = `wcw-cache:${hash(
     `${method}${url}${JSON.stringify(ctx.request.body)}`
   )}`;
 
@@ -67,7 +67,7 @@ module.exports = (ttl) => async (ctx, next) => {
       cached = await redis.get(key);
       if (cached) {
         ctx.response.status = 200;
-        ctx.response.set("spacex-api-cache", "HIT");
+        ctx.response.set("wcw-api-cache", "HIT");
         ctx.response.type = "application/json";
         ctx.response.body = cached;
         cached = true;
@@ -81,7 +81,7 @@ module.exports = (ttl) => async (ctx, next) => {
     await next();
 
     const responseBody = JSON.stringify(ctx.response.body);
-    ctx.response.set("spacex-api-cache", "MISS");
+    ctx.response.set("wcw-api-cache", "MISS");
 
     // Set cache
     try {

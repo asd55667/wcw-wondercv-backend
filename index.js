@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 
 const { logger } = require("./middleware/logger");
 const app = require("./app");
+const { log } = require("console");
 
 const port = process.env.PORT || 8081;
 const server = http.createServer(app.callback());

@@ -2,79 +2,110 @@ const mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const idPlugin = require("mongoose-id");
 
+const value = new mongoose.Schema({
+  value: { type: String, default: null },
+  desc: String,
+});
+
 const basicSchema = new mongoose.Schema(
   {
-    name: {
+    _id: {
       type: String,
-      default: null,
+      required: true,
     },
-    telephone: {
-      type: Number,
-      default: null,
+    user: {
+      name: {
+        desc: String,
+        value: {
+          type: String,
+          default: null,
+        },
+      },
+      avatar: { desc: String, src: String },
     },
-    email: {
-      type: String,
-      default: null,
+    contact: {
+      telephone: {
+        value: { type: Number, default: null },
+        desc: String,
+      },
+      email: { value: { type: String, default: null }, desc: String },
+      city: { value: { type: String, default: null }, desc: String },
     },
-    city: {
-      type: String,
-      default: null,
+    social: {
+      website: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
+
+      wechat: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
+      linkin: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
     },
-    website: {
-      type: String,
-      default: null,
+    intension: {
+      workIntension: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
+      currentJob: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
+      expectSalary: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
     },
-    workIntension: {
-      type: String,
-      default: null,
-    },
-    wechat: {
-      type: String,
-      default: null,
-    },
-    linkin: {
-      type: String,
-      default: null,
-    },
-    age: {
-      type: String,
-      default: null,
-    },
-    sex: {
-      type: String,
-      default: null,
-    },
-    height: {
-      type: String,
-      default: null,
-    },
-    weight: {
-      type: String,
-      default: null,
-    },
-    race: {
-      type: String,
-      default: null,
-    },
-    Hometown: {
-      type: String,
-      default: null,
-    },
-    politicalStatus: {
-      type: String,
-      default: null,
-    },
-    marritalState: {
-      type: String,
-      default: null,
-    },
-    currentJob: {
-      type: String,
-      default: null,
-    },
-    expectSalary: {
-      type: String,
-      default: null,
+    other: {
+      age: {
+        value: { type: Date, default: null },
+        desc: String,
+      },
+      sex: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
+      height: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
+      weight: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
+      race: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
+      Hometown: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
+      politicalStatus: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
+      marritalState: {
+        value: { type: String, default: null },
+        placeholder: String,
+        desc: String,
+      },
     },
   },
   { autoCreate: true }

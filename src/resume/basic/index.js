@@ -1,11 +1,13 @@
 const Router = require("koa-router");
+const koaJwt = require("koa-jwt");
 
 const Basic = require("./model");
 const { auth, authz, cache } = require("../../../middleware");
+const { secret } = require("../../app.config");
 
 const router = new Router({ prefix: "/basic" });
 
-router.get("/", cache(300), async (ctx) => {
+router.get("/", cache(300), authz("user:list"), async (ctx) => {
   try {
     const result = await Basic.find({});
     ctx.status = 200;
@@ -15,18 +17,9 @@ router.get("/", cache(300), async (ctx) => {
   }
 });
 
-router.get("/", cache(300), async (ctx) => {
-  try {
-    const result = await Basic.find({});
-    ctx.status = 200;
-    ctx.body = result;
-  } catch (error) {
-    ctx.throw(400, error.message);
-  }
-});
-
-// Get one crew member
-router.get("/:id", cache(300), async (ctx) => {
+router.get("/:id", cache(300), koaJwt({ secret }), async (ctx) => {
+  // if(ctx.state.user.id === ctx.params.id)
+  console.log(ctx.params.id);
   const result = await Basic.findById(ctx.params.id);
   if (!result) {
     ctx.throw(404);
@@ -35,7 +28,6 @@ router.get("/:id", cache(300), async (ctx) => {
   ctx.body = result;
 });
 
-// Query crew members
 router.post("/query", cache(300), async (ctx) => {
   const { query = {}, options = {} } = ctx.request.body;
   try {
@@ -47,19 +39,24 @@ router.post("/query", cache(300), async (ctx) => {
   }
 });
 
-// Create crew member
-router.post("/", auth, authz("crew:create"), async (ctx) => {
+router.post("/", auth, koaJwt({ secret }), async (ctx) => {
   try {
-    const crew = new Basic(ctx.request.body);
-    await crew.save();
-    ctx.status = 201;
+    // console.log(ctx.request.body, ctx.state.user.id);
+    const newUser = Object.assign(ctx.request.body);
+    newUser._id = ctx.state.user.id;
+    try {
+      const user = new Basic(newUser);
+      await user.save();
+      ctx.status = 201;
+    } catch (err) {
+      console.log(err);
+    }
   } catch (error) {
     ctx.throw(400, error.message);
   }
 });
 
-// Update crew member
-router.patch("/:id", auth, authz("crew:update"), async (ctx) => {
+router.patch("/:id", auth, koaJwt({ secret }), async (ctx) => {
   try {
     await Basic.findByIdAndUpdate(ctx.params.id, ctx.request.body, {
       runValidators: true,
@@ -70,8 +67,7 @@ router.patch("/:id", auth, authz("crew:update"), async (ctx) => {
   }
 });
 
-// Delete crew member
-router.delete("/:id", auth, authz("crew:delete"), async (ctx) => {
+router.delete("/:id", auth, koaJwt({ secret }), async (ctx) => {
   try {
     await Basic.findByIdAndDelete(ctx.params.id);
     ctx.status = 200;

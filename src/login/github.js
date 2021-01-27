@@ -10,7 +10,7 @@ const koaJwt = require("koa-jwt");
 
 const { auth } = require("../../middleware");
 const _axios = require("../axios");
-const { githubConfig, secret, expires } = require("./config");
+const { githubConfig, secret, expires } = require("../app.config");
 
 const router = new Router({ prefix: "/github" });
 const redis = new Redis();
@@ -119,7 +119,7 @@ router.get("/", auth, koaJwt({ secret: secret }), async (ctx) => {
     code: 0,
     access_token: _access_token,
     refresh_token,
-    user_info: { name, email, avatar_url },
+    user_info: { name, email, avatar_url, uid: key },
   };
 });
 

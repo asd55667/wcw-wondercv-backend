@@ -4,6 +4,9 @@ const idPlugin = require("mongoose-id");
 
 const jobSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String,
+    },
     company: {
       type: String,
     },

@@ -4,6 +4,9 @@ const idPlugin = require("mongoose-id");
 
 const educationSchema = new mongoose.Schema(
   {
+    _id: {
+      type: String,
+    },
     school: {
       type: String,
     },
