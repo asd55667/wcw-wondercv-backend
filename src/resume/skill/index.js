@@ -7,19 +7,8 @@ const { secret } = require("../../app.config");
 
 const router = new Router({ prefix: "/skill" });
 
-router.get("/", cache(300), authz("user:list"), async (ctx) => {
-  try {
-    const result = await Skill.find({});
-    ctx.status = 200;
-    ctx.body = result;
-  } catch (error) {
-    ctx.throw(400, error.message);
-  }
-});
-
-router.get("/:id", cache(300), koaJwt({ secret }), async (ctx) => {
+router.get("/", cache(300), koaJwt({ secret }), async (ctx) => {
   // if(ctx.state.user.id === ctx.params.id)
-  console.log(ctx.params.id);
   const result = await Skill.findById(ctx.params.id);
   if (!result) {
     ctx.throw(404);
@@ -41,12 +30,12 @@ router.post("/query", cache(300), async (ctx) => {
 
 router.post("/", auth, koaJwt({ secret }), async (ctx) => {
   try {
-    console.log(ctx.request.body);
+    // console.log(ctx.request.body);
     // const newUser = Object.assign({}, ctx.request.body);
     const newUser = {};
     newUser.skill = ctx.request.body;
     newUser._id = ctx.state.user.id;
-    console.log(newUser);
+    // console.log(newUser);
     const user = new Skill(newUser);
     await user.save();
     ctx.status = 201;
@@ -55,7 +44,7 @@ router.post("/", auth, koaJwt({ secret }), async (ctx) => {
   }
 });
 
-router.patch("/:id", auth, koaJwt({ secret }), async (ctx) => {
+router.patch("/", auth, koaJwt({ secret }), async (ctx) => {
   try {
     if (ctx.state.user.id !== ctx.params.id) {
       ctx.status = 403;
@@ -78,7 +67,7 @@ router.patch("/:id", auth, koaJwt({ secret }), async (ctx) => {
   }
 });
 
-router.delete("/:id", auth, koaJwt({ secret }), async (ctx) => {
+router.delete("/", auth, koaJwt({ secret }), async (ctx) => {
   try {
     await Skill.findByIdAndDelete(ctx.params.id);
     ctx.status = 200;

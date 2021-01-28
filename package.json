@@ -43,7 +43,7 @@
     "power-assert": "^1.6.1"
   },
   "scripts": {
-    "test": "mocha  --reporter spec -t 5000 -s 1000  tests/*.test.js --exit"
+    "test": "mocha  --reporter spec -t 5000 -s 1000  tests/resume.test.js --exit"
   },
   "author": "wcw",
   "license": "MIT"

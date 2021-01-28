@@ -7,25 +7,21 @@ const { secret } = require("../../app.config");
 
 const router = new Router({ prefix: "/basic" });
 
-router.get("/", cache(300), authz("user:list"), async (ctx) => {
+router.get("/", cache(300), koaJwt({ secret }), async (ctx) => {
   try {
-    const result = await Basic.find({});
+    if (ctx.state.user.id !== ctx.params.id) {
+      ctx.status = 403;
+      return;
+    }
+    const result = await Basic.findById(ctx.params.id);
+    if (!result) {
+      ctx.throw(404);
+    }
     ctx.status = 200;
     ctx.body = result;
   } catch (error) {
     ctx.throw(400, error.message);
   }
-});
-
-router.get("/:id", cache(300), koaJwt({ secret }), async (ctx) => {
-  // if(ctx.state.user.id === ctx.params.id)
-  console.log(ctx.params.id);
-  const result = await Basic.findById(ctx.params.id);
-  if (!result) {
-    ctx.throw(404);
-  }
-  ctx.status = 200;
-  ctx.body = result;
 });
 
 router.post("/query", cache(300), async (ctx) => {
@@ -56,7 +52,7 @@ router.post("/", auth, koaJwt({ secret }), async (ctx) => {
   }
 });
 
-router.patch("/:id", auth, koaJwt({ secret }), async (ctx) => {
+router.patch("/", auth, koaJwt({ secret }), async (ctx) => {
   try {
     await Basic.findByIdAndUpdate(ctx.params.id, ctx.request.body, {
       runValidators: true,
@@ -67,7 +63,7 @@ router.patch("/:id", auth, koaJwt({ secret }), async (ctx) => {
   }
 });
 
-router.delete("/:id", auth, koaJwt({ secret }), async (ctx) => {
+router.delete("/", auth, koaJwt({ secret }), async (ctx) => {
   try {
     await Basic.findByIdAndDelete(ctx.params.id);
     ctx.status = 200;

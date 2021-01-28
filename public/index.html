@@ -116,17 +116,18 @@
             //   ],
             // };
 
-            const state = "patch";
-            const module = "skill";
+            const state = "get";
+            const module = "basic";
             let res;
             if (state == "get") {
-              res = await axios.get(`/resume/${module}/${_id}`);
+              // res = await axios.get(`/resume/${_id}/${module}/${_id}`);
+              res = await axios.get(`/resume/${_id}/${module}`);
             } else if (state == "post") {
-              res = await axios.post(`/resume/${module}`, skill);
+              res = await axios.post(`/resume/${module}`, basic);
             } else if (state == "delete") {
               res = await axios.delete(`/resume/${module}/${_id}`);
             } else if (state == "patch") {
-              res = await axios.patch(`/resume/${module}/${_id}`, skill);
+              res = await axios.patch(`/resume/${module}/${_id}`, basic);
             }
             console.log(res);
             if (res.data.code === 0) this.isLogin = true;

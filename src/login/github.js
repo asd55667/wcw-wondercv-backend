@@ -119,7 +119,8 @@ router.get("/", auth, koaJwt({ secret: secret }), async (ctx) => {
     code: 0,
     access_token: _access_token,
     refresh_token,
-    user_info: { name, email, avatar_url, uid: key },
+    uid: key,
+    user_info: { name, email, avatar_url },
   };
 });
 

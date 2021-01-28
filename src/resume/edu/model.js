@@ -2,18 +2,18 @@ const mongoose = require("mongoose");
 const mongoosePaginate = require("mongoose-paginate-v2");
 const idPlugin = require("mongoose-id");
 
-const projectSchema = new mongoose.Schema(
+const educationSchema = new mongoose.Schema(
   {
     _id: {
       type: String,
     },
-    projects: [
+    edus: [
       {
         ref: Boolean,
         name: {
           desc: {
             type: String,
-            default: "项目名称",
+            default: "学校名称",
           },
           value: {
             type: String,
@@ -29,7 +29,12 @@ const projectSchema = new mongoose.Schema(
           },
         },
         attrs: {
-          post: { desc: { type: String, default: "担任角色" }, value: String },
+          post: { desc: { type: String, default: "所学专业" }, value: String },
+          scholar: { desc: { type: String, default: "学历" }, value: String },
+          department: {
+            desc: { type: String, default: "所在学院" },
+            value: String,
+          },
         },
         location: {
           desc: { type: String, default: "所在城市" },
@@ -40,19 +45,20 @@ const projectSchema = new mongoose.Schema(
       },
     ],
   },
+
   { autoCreate: true }
 );
 
-projectSchema.pre("validate", function (next) {
-  if (this.projects.length > 30) {
-    throw "projects exceeds maximum array size (30)!";
+educationSchema.pre("validate", function (next) {
+  if (this.edus.length > 30) {
+    throw "edus exceeds maximum array size (30)!";
   }
   next();
 });
 
-projectSchema.plugin(mongoosePaginate);
-projectSchema.plugin(idPlugin);
+educationSchema.plugin(mongoosePaginate);
+educationSchema.plugin(idPlugin);
 
-const Project = mongoose.model("Project", projectSchema);
+const Education = mongoose.model("Education", educationSchema);
 
-module.exports = Project;
+module.exports = Education;
