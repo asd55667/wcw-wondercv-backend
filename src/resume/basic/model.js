@@ -13,6 +13,7 @@ const basicSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    imported: Array,
     user: {
       name: {
         desc: String,

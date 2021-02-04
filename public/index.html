@@ -120,14 +120,13 @@
             const module = "basic";
             let res;
             if (state == "get") {
-              // res = await axios.get(`/resume/${_id}/${module}/${_id}`);
-              res = await axios.get(`/resume/${_id}/${module}`);
+              res = await axios.get(`/resume/${_id}`);
             } else if (state == "post") {
-              res = await axios.post(`/resume/${module}`, basic);
+              res = await axios.post(`/resume/${_id}/${module}`, basic);
             } else if (state == "delete") {
-              res = await axios.delete(`/resume/${module}/${_id}`);
+              res = await axios.delete(`/resume/${_id}/${module}`);
             } else if (state == "patch") {
-              res = await axios.patch(`/resume/${module}/${_id}`, basic);
+              res = await axios.patch(`/resume/${_id}/${module}`, basic);
             }
             console.log(res);
             if (res.data.code === 0) this.isLogin = true;

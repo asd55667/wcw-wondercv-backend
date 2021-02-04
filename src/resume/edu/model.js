@@ -7,7 +7,7 @@ const educationSchema = new mongoose.Schema(
     _id: {
       type: String,
     },
-    edus: [
+    data: [
       {
         ref: Boolean,
         name: {
@@ -50,7 +50,7 @@ const educationSchema = new mongoose.Schema(
 );
 
 educationSchema.pre("validate", function (next) {
-  if (this.edus.length > 30) {
+  if (this.data.length > 30) {
     throw "edus exceeds maximum array size (30)!";
   }
   next();

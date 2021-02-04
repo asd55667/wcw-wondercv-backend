@@ -61,8 +61,8 @@ app.use(
 );
 app.use(responseTime);
 // app.use(requestLogger);
-app.use(static(__dirname + "/public"));
-// app.use(static("/Users/Src/MyProject/vue/resume/dist"));
+// app.use(static(__dirname + "/public"));
+app.use(static("/Users/Src/MyProject/vue/resume/dist"));
 app.use(router.routes()); //.use(router.allowedMethods());
 
 module.exports = app;

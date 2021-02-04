@@ -7,7 +7,7 @@ const projectSchema = new mongoose.Schema(
     _id: {
       type: String,
     },
-    projects: [
+    data: [
       {
         ref: Boolean,
         name: {
@@ -44,7 +44,7 @@ const projectSchema = new mongoose.Schema(
 );
 
 projectSchema.pre("validate", function (next) {
-  if (this.projects.length > 30) {
+  if (this.datas.length > 30) {
     throw "projects exceeds maximum array size (30)!";
   }
   next();

@@ -7,7 +7,7 @@ const jobSchema = new mongoose.Schema(
     _id: {
       type: String,
     },
-    jobs: [
+    data: [
       {
         ref: Boolean,
         name: {
@@ -35,7 +35,10 @@ const jobSchema = new mongoose.Schema(
           desc: { type: String, default: "所在城市" },
           value: String,
         },
-        desc: String,
+        desc: {
+          type: String,
+          default: " 比工作参加过的项目更具有说服力的，就是自己写的代码 ",
+        },
         update: Date,
       },
     ],
@@ -45,7 +48,7 @@ const jobSchema = new mongoose.Schema(
 );
 
 jobSchema.pre("validate", function (next) {
-  if (this.jobs.length > 30) {
+  if (this.data.length > 30) {
     throw "jobs exceeds maximum array size (30)!";
   }
   next();

@@ -7,7 +7,6 @@ const { secret } = require("../../app.config");
 
 const router = new Router({ prefix: "/job" });
 
-
 router.get("/", cache(300), koaJwt({ secret }), async (ctx) => {
   const result = await Job.findById(ctx.params.id);
   if (!result) {
@@ -75,4 +74,4 @@ router.delete("/", auth, koaJwt({ secret }), async (ctx) => {
   }
 });
 
-module.exports = router;
+module.exports = { router, model: Job };

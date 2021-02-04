@@ -6,17 +6,20 @@ const summarySchema = mongoose.Schema({
   _id: {
     type: String,
   },
-  summarys: [
+  data: [
     {
       ref: Boolean,
-      desc: String,
+      desc: {
+        type: String,
+        default: "  ",
+      },
       update: Date,
     },
   ],
 });
 
 summarySchema.pre("validate", function (next) {
-  if (this.summarys.length > 30) {
+  if (this.data.length > 30) {
     throw "summary exceeds maximum array size (30)!";
   }
   next();

@@ -74,4 +74,4 @@ router.delete("/", auth, koaJwt({ secret }), async (ctx) => {
   }
 });
 
-module.exports = router;
+module.exports = { router, model: Education };

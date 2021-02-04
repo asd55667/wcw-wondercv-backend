@@ -1,5 +1,6 @@
 const Router = require("koa-router");
 const Redis = require("ioredis");
+const koaJwt = require("koa-jwt");
 
 const _axios = require("../axios");
 // jwt
@@ -10,6 +11,7 @@ const {
   smtp,
   transporter,
   genEmailOpts,
+  genPdfOpts,
   secret,
   expires,
 } = require("../app.config");
@@ -29,12 +31,12 @@ router.post("/code", auth, async (ctx) => {
   }
 
   const code = smtp.code();
-  const mailOptions = genEmailOpts(email, code);
+  const mail = genEmailOpts(email, code);
 
   console.log("val code", code);
-  // TODO refresh qq email auth code
+
   // redis.hmset(`nodemail:${email}`, "code", code, "expire", smtp.expire());
-  await transporter.sendMail(mailOptions, (err, info) => {
+  await transporter.sendMail(mail, (err, info) => {
     if (err) {
       console.log(err, "\n发送邮件失败");
       ctx.body = {
@@ -83,7 +85,6 @@ router.post("/", auth, async (ctx) => {
       //   // Secure: true,
       //   overwrite: false  ,
       // });
-      console.log(key);
       const access_token = jwt.sign(
         {
           email,
@@ -110,6 +111,46 @@ router.post("/", auth, async (ctx) => {
       };
       return;
     }
+  }
+});
+
+const fs = require("fs");
+
+function getArrayBuffer(data) {
+  let len = data.length;
+  let ab = new ArrayBuffer(len);
+  let u8 = new Uint8Array(ab);
+  while (len--) u8[len] = data.charCodeAt(len);
+  return ab;
+}
+
+router.post("/resume", koaJwt({ secret: secret }), async (ctx) => {
+  const { cv, email, filename } = ctx.request.body;
+
+  fs.appendFileSync("wcw.pdf", Buffer.from(getArrayBuffer(cv)));
+
+  const mime = genPdfOpts(email, filename, Buffer.from(getArrayBuffer(cv)));
+  try {
+    await transporter.sendMail(mime, (err, info) => {
+      if (err) {
+        console.log(err, "\n发送邮件失败");
+        ctx.body = {
+          code: -1,
+          msg: err,
+        };
+      } else {
+        console.log("success");
+        ctx.status = 200;
+        ctx.body = {
+          code: 0,
+          msg: "简历已至邮箱，请注意查收",
+        };
+      }
+    });
+  } catch (err) {
+    ctx.status = 500;
+    console.log(err);
+    return;
   }
 });
 

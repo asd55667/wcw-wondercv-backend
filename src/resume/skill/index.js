@@ -30,7 +30,7 @@ router.post("/query", cache(300), async (ctx) => {
 
 router.post("/", auth, koaJwt({ secret }), async (ctx) => {
   try {
-    // console.log(ctx.request.body);
+    console.log(ctx.request.body);
     // const newUser = Object.assign({}, ctx.request.body);
     const newUser = {};
     newUser.skill = ctx.request.body;
@@ -76,4 +76,4 @@ router.delete("/", auth, koaJwt({ secret }), async (ctx) => {
   }
 });
 
-module.exports = router;
+module.exports = { router, model: Skill };

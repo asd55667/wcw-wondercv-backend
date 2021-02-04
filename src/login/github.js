@@ -18,7 +18,7 @@ const redis = new Redis();
 router.get("/token", async (ctx) => {
   var path = `https://github.com/login/oauth/authorize?${querystring.stringify({
     client_id: githubConfig.client_id,
-    redirect_uri: "http://localhost:8081/github/callback",
+    redirect_uri: "http://localhost:8081/login/github/callback",
   })}`;
   ctx.redirect(path);
 });
@@ -39,7 +39,7 @@ router.get("/callback", async (ctx) => {
   //  access_token for github
   const access_token = querystring.parse(res.data).access_token;
 
-  // console.log(`access_token: ${access_token}`);
+  console.log(`access_token: ${access_token}`);
   const uid = uuidv4();
 
   redis.hmset(
@@ -52,7 +52,7 @@ router.get("/callback", async (ctx) => {
 
   const tmp_token = jwt.sign(
     {
-      key: uid,
+      uid,
     },
     secret[0],
     { expiresIn: expires.tmp_token }
@@ -61,7 +61,6 @@ router.get("/callback", async (ctx) => {
   ctx.response.type = "html";
   ctx.body = `
       <script> 
-        window.localStorage.setItem('authSuccess','true')
         window.localStorage.setItem('access_token','${tmp_token}')
         window.close()
       </script>
@@ -71,35 +70,30 @@ router.get("/callback", async (ctx) => {
 });
 
 router.get("/", auth, koaJwt({ secret: secret }), async (ctx) => {
-  let uid;
-  const parts = ctx.header.authorization.trim().split(" ");
-  if (parts.length === 2) {
-    const scheme = parts[0];
-    const token = parts[1];
-
-    if (/^Bearer$/i.test(scheme)) {
-      const payload = jwt.verify(token, secret[0]);
-      uid = payload.data;
-    }
-  }
+  const { uid } = ctx.state.user;
   const access_token = await redis.hget(`nodegit:${uid}`, "access_token");
   // del github token
-  redis.del(`nodegit:${uid}`);
+  // redis.del(`nodegit:${uid}`);
+
+  console.log("get", access_token);
 
   const header = {
     Authorization: `Bearer ${access_token}`,
   };
+
   const res = await axios({
     method: "GET",
     url: "https://api.github.com/user",
     headers: header,
   });
+
   const usr = await _axios.post("/v1/users/find", { name: res.data.login });
-  const { name, key, role, avatar_url } = usr.data;
+
+  const { name, email, key, role, avatar_url } = usr.data;
 
   const _access_token = jwt.sign(
     {
-      email,
+      name,
       id: key,
     },
     secret[0],
@@ -107,18 +101,17 @@ router.get("/", auth, koaJwt({ secret: secret }), async (ctx) => {
   );
   const refresh_token = jwt.sign(
     {
-      email,
+      name,
       id: key,
-      role: role,
+      role,
     },
     secret[1],
     { expiresIn: expires.refresh_token }
   );
-
   ctx.body = {
     code: 0,
-    access_token: _access_token,
     refresh_token,
+    access_token: _access_token,
     uid: key,
     user_info: { name, email, avatar_url },
   };

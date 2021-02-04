@@ -38,12 +38,14 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
     "intelli-espower-loader": "^1.0.1",
     "mocha": "^8.2.1",
     "power-assert": "^1.6.1"
   },
   "scripts": {
-    "test": "mocha  --reporter spec -t 5000 -s 1000  tests/resume.test.js --exit"
+    "test": "mocha  --reporter spec -t 5000 -s 1000  tests/login.test.js --exit"
   },
   "author": "wcw",
   "license": "MIT"
